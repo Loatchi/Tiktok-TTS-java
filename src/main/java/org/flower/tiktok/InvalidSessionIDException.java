@@ -1,2 +1,3 @@
-package org.flower.tiktok;public class InvalidSessionIDException {
-}
+package org.flower.tiktok;
+
+public class InvalidSessionIDException extends Exception{}
