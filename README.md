@@ -20,7 +20,7 @@ tts.createAudioFile();
 
 ```
 
-You are limited to a max speech length of 300. *I'll try to make it larger...*
+They're is no limit in speech size.
 
 
 ## Getting SessionID
