@@ -2,23 +2,24 @@ package org.flower.tiktok;
 
 import com.google.gson.Gson;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Base64;
-import java.util.Map;
+import java.util.*;
 
 public class TiktokTTS {
 
     private String sessionId;
     private Voice voice;
-    private String speech;
+    private final List<String> speeches = new ArrayList<>();
     private File output;
-
-
     public TiktokTTS(String sessionId, Voice voice, String speech, File output){
         this.voice = voice;
         setSpeech(speech);
@@ -34,8 +35,8 @@ public class TiktokTTS {
         return voice;
     }
 
-    public String getSpeech() {
-        return speech;
+    public List<String> getSpeeches() {
+        return speeches;
     }
 
     public File getOutput() {
@@ -51,29 +52,46 @@ public class TiktokTTS {
     }
 
     public void setSpeech(String speech) {
-        this.speech = speech
+        speeches.clear();
+
+        if(speech == null)
+            return;
+
+        StringBuilder builder = new StringBuilder();
+        int nbOfWords = 0;
+        for(String word: speech
                 .replaceAll("\\+", "plus")
                 .replaceAll(" ", "+")
-                .replaceAll("&", "and");
-
-        if(this.speech.length() > 300){
-            throw new IllegalArgumentException("Speech=\"" + this.speech
-                    + "\" is too long: " + this.speech.length() + " length for max: 300");
+                .replaceAll("&", "and")
+                .split("\\+")){
+            nbOfWords++;
+            // 294 and 55 are based on a phenomenological study with the Test Class
+            // I don't really know exactly if those data are exact. But for now it worked so...
+            if(builder.length() + word.length() >= 294 || nbOfWords >= 55) {
+                speeches.add(builder.toString());
+                builder.setLength(0);
+                nbOfWords = 0;
+            }
+            builder.append(word).append("+");
         }
+
+        speeches.add(builder.toString().stripTrailing());
+
     }
 
     public void setOutput(File output) {
         this.output = output;
     }
 
-    public void createAudioFile()
-            throws InvalidSessionIDException, URISyntaxException, IOException, InterruptedException {
+    private byte[] getAudioAsBytes(String speech) throws URISyntaxException, IOException,
+            InterruptedException, InvalidSessionIDException, TiktokTTSException {
 
         HttpClient client = HttpClient.newHttpClient();
 
         String url  = "https://api22-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke" +
                 "/?text_speaker=" + voice.tiktokId + "&req_text=" + speech +"&speaker_map_type=0&aid=1233";
-        System.out.println(url);
+
+        // based on oscie57's project
         HttpRequest request = HttpRequest.newBuilder()
                 .header("User-Agent", "com.zhiliaoapp.musically/2022600030 (Linux; U;" +
                         " Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)")
@@ -89,18 +107,39 @@ public class TiktokTTS {
         @SuppressWarnings("unchecked")
         Map<String, Object> map = gson.fromJson(response.body(), Map.class);
 
-        if(map.get("message").equals("Couldn't load speech. Try again.")){
+        String message = map.get("message").toString();
+
+        if(message.equals("Couldn't load speech. Try again.")){
             throw new InvalidSessionIDException();
         }
 
-        System.out.println(response.body());
+        if(message.equals("Text-to-speech isn't supported for this language")){
+            throw new TiktokTTSException("Seems like a typo.");
+        }
+
+        if(message.equals("Text too long to create speech audio")){
+            throw new TiktokTTSException("This is unexpected: create an issue on Github with the input data.");
+        }
 
         @SuppressWarnings("unchecked")
         byte[] b64 = Base64.getDecoder().decode(((Map<String, Object>) map.get("data")).get("v_str").toString());
 
-        try(FileOutputStream outputStream = new FileOutputStream(output)){
-            outputStream.write(b64);
-        }
+        return b64;
+    }
 
+    public void createAudioFile()
+            throws
+            InvalidSessionIDException,
+            URISyntaxException,
+            IOException,
+            InterruptedException,
+            TiktokTTSException {
+
+        try(FileOutputStream stream = new FileOutputStream(output)){
+            for (String speech : speeches) {
+                byte[] b64 = getAudioAsBytes(speech);
+                stream.write(b64);
+            }
+        }
     }
 }
