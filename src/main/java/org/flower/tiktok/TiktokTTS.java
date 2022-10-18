@@ -21,10 +21,7 @@ public class TiktokTTS {
 
     public TiktokTTS(String sessionId, Voice voice, String speech, File output){
         this.voice = voice;
-        this.speech = speech
-                .replaceAll("\\+", "plus")
-                .replaceAll(" ", "+")
-                .replaceAll("&", "and");;
+        setSpeech(speech);
         this.output = output;
         this.sessionId = sessionId;
     }
@@ -54,7 +51,15 @@ public class TiktokTTS {
     }
 
     public void setSpeech(String speech) {
-        this.speech = speech;
+        this.speech = speech
+                .replaceAll("\\+", "plus")
+                .replaceAll(" ", "+")
+                .replaceAll("&", "and");
+
+        if(this.speech.length() > 300){
+            throw new IllegalArgumentException("Speech=\"" + this.speech
+                    + "\" is too long: " + this.speech.length() + " length for max: 300");
+        }
     }
 
     public void setOutput(File output) {
