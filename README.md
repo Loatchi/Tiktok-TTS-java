@@ -34,4 +34,7 @@ While connected to the Tiktok web app you go to your Cookie menu and retrieve th
 3. Go to `Application/Cookies`.
 4. Search `sessionid` and copy its value.
 
+## Goals
 
+- [X] Have no limit on speech size
+- [ ] Properly concatenate each audio together (A concatenation should take place at an end of a sentence "," or ".")
