@@ -36,6 +36,8 @@ While connected to the Tiktok web app you go to your Cookie menu and retrieve th
 
 ## Downloads
 
+Latest Release: [GitHub Release](https://github.com/Loatchi/Tiktok-TTS-java/releases/latest)<br>
+
 ### Maven
 
 ```xml
