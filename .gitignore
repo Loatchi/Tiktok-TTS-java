@@ -42,3 +42,4 @@ build/
 
 
 *.mp3
+/out/
