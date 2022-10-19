@@ -1,5 +1,9 @@
-package org.flower.tiktok.test;
+package io.github.loatchi.tiktok.test;
 
+import io.github.loatchi.tiktok.InvalidSessionIDException;
+import io.github.loatchi.tiktok.TiktokTTS;
+import io.github.loatchi.tiktok.TiktokTTSException;
+import io.github.loatchi.tiktok.Voice;
 import org.flower.tiktok.*;
 
 import java.io.File;

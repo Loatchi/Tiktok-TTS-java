@@ -1,11 +1,7 @@
-package org.flower.tiktok;
+package io.github.loatchi.tiktok;
 
 import com.google.gson.Gson;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -1,4 +1,4 @@
-package org.flower.tiktok;
+package io.github.loatchi.tiktok;
 
 public class TiktokTTSException extends Exception{
     public TiktokTTSException(String s) {

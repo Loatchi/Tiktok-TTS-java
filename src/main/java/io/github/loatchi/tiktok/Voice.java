@@ -1,4 +1,4 @@
-package org.flower.tiktok;
+package io.github.loatchi.tiktok;
 
 public enum Voice {
 

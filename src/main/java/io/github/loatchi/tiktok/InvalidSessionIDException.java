@@ -1,3 +1,3 @@
-package org.flower.tiktok;
+package io.github.loatchi.tiktok;
 
 public class InvalidSessionIDException extends Exception{}
