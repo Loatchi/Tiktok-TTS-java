@@ -16,13 +16,17 @@ public class TiktokTTS {
     private Voice voice;
     private final List<String> speeches = new ArrayList<>();
     private File output;
-    private SpeechBreakMode breakMode = SpeechBreakMode.BREAK_ON_PUNCTUATION;
+    private SpeechBreakMode breakMode;
 
-    public TiktokTTS(String sessionId, Voice voice, String speech, File output){
+    public TiktokTTS(String sessionId, Voice voice, String speech, File output, SpeechBreakMode mode){
         this.voice = voice;
         setSpeech(speech);
         this.output = output;
         this.sessionId = sessionId;
+        this.breakMode = mode;
+    }
+    public TiktokTTS(String sessionId, Voice voice, String speech, File output){
+        this(sessionId, voice, speech, output, SpeechBreakMode.BREAK_ON_PUNCTUATION);
     }
 
     public String getSessionId() {
