@@ -16,6 +16,8 @@ public class TiktokTTS {
     private Voice voice;
     private final List<String> speeches = new ArrayList<>();
     private File output;
+    private SpeechBreakMode breakMode = SpeechBreakMode.BREAK_ON_PUNCTUATION;
+
     public TiktokTTS(String sessionId, Voice voice, String speech, File output){
         this.voice = voice;
         setSpeech(speech);
@@ -39,6 +41,10 @@ public class TiktokTTS {
         return output;
     }
 
+    public SpeechBreakMode getBreakMode() {
+        return breakMode;
+    }
+
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
@@ -53,30 +59,15 @@ public class TiktokTTS {
         if(speech == null)
             return;
 
-        StringBuilder builder = new StringBuilder();
-        int nbOfWords = 0;
-        for(String word: speech
-                .replaceAll("\\+", "plus")
-                .replaceAll(" ", "+")
-                .replaceAll("&", "and")
-                .split("\\+")){
-            nbOfWords++;
-            // 294 and 55 are based on a phenomenological study with the Test Class
-            // I don't really know exactly if those data are exact. But for now it worked so...
-            if(builder.length() + word.length() >= 294 || nbOfWords >= 55) {
-                speeches.add(builder.toString());
-                builder.setLength(0);
-                nbOfWords = 0;
-            }
-            builder.append(word).append("+");
-        }
-
-        speeches.add(builder.toString().stripTrailing());
-
+        speeches.addAll(breakMode.getSpeechParts(speech));
     }
 
     public void setOutput(File output) {
         this.output = output;
+    }
+
+    public void setBreakMode(SpeechBreakMode breakMode) {
+        this.breakMode = breakMode;
     }
 
     private byte[] getAudioAsBytes(String speech) throws URISyntaxException, IOException,
