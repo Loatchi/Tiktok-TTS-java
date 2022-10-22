@@ -43,7 +43,7 @@ Latest Release: [GitHub Release](https://github.com/Loatchi/Tiktok-TTS-java/rele
 ```xml
 <dependency>
     <groupId>io.github.loatchi.tiktok</groupId>
-    <artifactId>TiktokTTS</artifactId>
+    <artifactId>tiktok-tts</artifactId>
     <version>VERSION</version>
 </dependency>
 ```
