@@ -51,6 +51,6 @@ Latest Release: [GitHub Release](https://github.com/Loatchi/Tiktok-TTS-java/rele
 ## Goals
 
 - [X] Have no limit on speech size
-- [ ] Properly concatenate each audio together (A concatenation should take place at an end of a sentence "," or ".")
+- [X] Properly concatenate each audio together (A concatenation should take place at an end of a sentence "," or ".")
 
 
